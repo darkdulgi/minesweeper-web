@@ -1,3 +1,5 @@
+import '@/styles/globals.css'
+
 export const metadata = {
   title: 'Minesweeper',
   description: '지뢰찾기',
