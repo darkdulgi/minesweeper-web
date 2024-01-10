@@ -39,15 +39,15 @@ export default function Page() {
             {game.row}x{game.col}
           </label>
         ))}
+
+        <input
+          type='button'
+          value='Go!'
+          className="border bg-sky-100 active:bg-red-100"
+          onClick={handleClick}
+        />
       </div>
-
-      <input
-        type='button'
-        value='Go!'
-        className="border block bg-sky-100 active:bg-red-100"
-        onClick={handleClick}
-      />
-
+      
       현재 난이도:{difficulty[stage].name}
 
       <Board row={difficulty[stage].row} col={difficulty[stage].col} />
