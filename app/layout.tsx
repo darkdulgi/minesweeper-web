@@ -4,7 +4,7 @@ export const metadata = {
   title: 'Minesweeper',
   description: '지뢰찾기',
   icons: {
-    icon: '/favicon.png',
+    icon: 'favicon.png',
   },
 }
 

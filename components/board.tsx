@@ -1,35 +1,33 @@
 import { useEffect, useState, memo } from "react";
 import initialize from "@/components/initialize";
+import useGameState from "@/store/gameStateStore";
 
 const dx = [-1, -1, -1, 0, 1, 1, 1, 0];
 const dy = [-1, 0, 1, 1, 1, 0, -1, -1];
 
-const seeAllMine = (field, view, setView, setFailed, row, col) => {
+const seeAllMine = (setView, setFailed, view, field, row, col) => {
   const copyView = view.map(arr => [...arr]);
   for (let i = 0; i < row; i++) {
     for (let j = 0; j < col; j++) {
       if (field[i][j] === -1) copyView[i][j] = 1;
     }
   }
-  setView(copyView.map(arr => [...arr]));
-  setFailed(true);
+  setView(copyView);
 }
 
 const Board = ({ row, col }) => {
+  const { field, view, failed, setField, setView, setFailed }: any = useGameState();
   const allMine = Math.floor(row * col * 0.15);
-  const [field, setField] = useState([]);
-  const [view, setView] = useState([]);
-  const [mine, setMine] = useState<number>(allMine);
-  const [failed, setFailed] = useState(false);
-
   useEffect(() => {
-    initialize(setField, setView, setFailed, allMine, row, col);
-  }, [row])
+    initialize(setView, setField, setFailed, allMine, row, col);
+  }, [row]);
 
-  const clickHandler = (i, j) => {
+  const leftClickHandler = (i, j) => {
+    if (view[i][j] < 0) return;
     if (field[i][j] === -1) {
       alert('실패!');
-      seeAllMine(field, view, setView, setFailed, row, col);
+      setFailed(true);
+      seeAllMine(setView, setFailed, view, field, row, col);
       return;
     }
     const copyView = view.map(arr => [...arr]);
@@ -43,11 +41,19 @@ const Board = ({ row, col }) => {
       for (let i = 0; i < 8; i++) {
         const xx = x + dx[i];
         const yy = y + dy[i];
-        if (xx >= 0 && xx < row && yy >= 0 && yy < col && field[xx][yy] !== -1 && !copyView[xx][yy]) q.push({ x: xx, y: yy });
+        if (xx >= 0 && xx < row && yy >= 0 && yy < col && field[xx][yy] !== -1 && copyView[xx][yy] <= 0) q.push({ x: xx, y: yy });
       }
     }
-    setView(copyView.map(arr => [...arr]));
-  }
+    setView(copyView);
+  };
+
+  const rightClickHandler = (e, i, j) => {
+    e.preventDefault();
+    if (view[i][j] > 0 || failed) return;
+    const copyView = view.map(arr => [...arr]);
+    if (--copyView[i][j] < -2) copyView[i][j] = 0;
+    setView(copyView);
+  };
 
   return (
     <div className="w-full">
@@ -57,15 +63,26 @@ const Board = ({ row, col }) => {
             <button
               key={j}
               disabled={failed}
-              className={`h-10 w-10 border border-black ${room ? (field[i][j] === -1 ? 'bg-red-300' : 'bg-white') : 'bg-slate-400'}`}
-              onClick={() => clickHandler(i, j)}>
-              {room ? (field[i][j] !== 0 ? (field[i][j] === -1 ? <img src='/mine.png' /> : field[i][j]) : null) : null}
+              className={`flex items-center justify-center h-10 w-10 border font-bold border-black ${room === 1 ? (field[i][j] === -1 ? 'bg-red-300' : 'bg-white') : 'bg-slate-300'}`}
+              onClick={() => leftClickHandler(i, j)}
+              onContextMenu={(e) => rightClickHandler(e, i, j)}
+            >
+              {room === 1
+                ? (field[i][j] !== 0
+                  ? (field[i][j] === -1 ?
+                    <img src="mine.png" />
+                    : field[i][j]) : null)
+                : (room === -1
+                  ? <img src="flag.png" />
+                  : (room === -2
+                    ? <img src="question.png" />
+                    : null))}
             </button>
           ))}
         </div>
       ))}
 
-      <button className="bg-green-200" onClick={() => initialize(setField, setView, setFailed, allMine, row, col)}>
+      <button className="bg-green-200" onClick={() => initialize(setView, setField, setFailed, allMine, row, col)}>
         다시하기
       </button>
     </div>
