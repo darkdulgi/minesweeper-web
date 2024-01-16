@@ -1,4 +1,4 @@
-import { useEffect, useState, memo } from "react";
+import { useEffect, memo } from "react";
 import initialize from "@/components/initialize";
 import useGameState from "@/store/gameStateStore";
 
@@ -16,10 +16,10 @@ const seeAllMine = (setView, setFailed, view, field, row, col) => {
 }
 
 const Board = ({ row, col }) => {
-  const { field, view, failed, setField, setView, setFailed }: any = useGameState();
+  const { field, view, failed, leftRoom, setField, setView, setFailed, setLeftRoom }: any = useGameState();
   const allMine = Math.floor(row * col * 0.15);
   useEffect(() => {
-    initialize(setView, setField, setFailed, allMine, row, col);
+    initialize(setView, setField, setFailed, setLeftRoom, allMine, row, col);
   }, [row]);
 
   const leftClickHandler = (i, j) => {
@@ -31,20 +31,29 @@ const Board = ({ row, col }) => {
       return;
     }
     const copyView = view.map(arr => [...arr]);
+    let currentLeftRoom = leftRoom;
     const q = [];
     q.push({ x: i, y: j });
+    copyView[i][j] = 1;
     while (q.length) {
       const { x, y } = q[0];
-      copyView[x][y] = 1;
+      currentLeftRoom--;
       q.shift();
       if (field[x][y] > 0) continue;
       for (let i = 0; i < 8; i++) {
         const xx = x + dx[i];
         const yy = y + dy[i];
-        if (xx >= 0 && xx < row && yy >= 0 && yy < col && field[xx][yy] !== -1 && copyView[xx][yy] <= 0) q.push({ x: xx, y: yy });
+        if (xx >= 0 && xx < row && yy >= 0 && yy < col && field[xx][yy] !== -1 && copyView[xx][yy] <= 0) {
+          copyView[xx][yy] = 1;
+          q.push({ x: xx, y: yy });
+        }
       }
     }
     setView(copyView);
+    setLeftRoom(currentLeftRoom);
+    if (leftRoom === allMine) {
+      alert("승리!");
+    }
   };
 
   const rightClickHandler = (e, i, j) => {
@@ -82,7 +91,7 @@ const Board = ({ row, col }) => {
         </div>
       ))}
 
-      <button className="bg-green-200" onClick={() => initialize(setView, setField, setFailed, allMine, row, col)}>
+      <button className="bg-green-200" onClick={() => initialize(setView, setField, setFailed, setLeftRoom, allMine, row, col)}>
         다시하기
       </button>
     </div>
