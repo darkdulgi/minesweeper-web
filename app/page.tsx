@@ -6,7 +6,7 @@ export default function Page() {
   const difficulty = [
     { row: 9, col: 9, name: 'easy', id: 0 },
     { row: 18, col: 18, name: 'medium', id: 1 },
-    { row: 30, col: 30, name: 'hard', id: 2 },
+    { row: 18, col: 30, name: 'hard', id: 2 },
   ];
   const [stage, setStage] = useState<number>(0);
   const [selectStage, setSelectStage] = useState<number>(0);
