@@ -18,39 +18,42 @@ export default function Page() {
   };
 
   return (
-    <div className="mx-auto w-full max-w-3xl bg-yellow-100">
-      <div>
-        Minesweeper
+    <div className="bg-yellow-100 min-h-screen h-full">
+      <div className="mx-auto w-full flex flex-col items-center pt-3 gap-2">
+        <div className="font-mono text-5xl font-bold">
+          Minesweeper
+        </div>
+
+        <div>
+          <span>
+            크기 선택
+          </span>
+
+          {difficulty.map(game => (
+            <label key={game.id}>
+              <input
+                type="radio"
+                value={game.id}
+                checked={selectStage === game.id}
+                onChange={handleRadio}
+              />
+              {game.row}x{game.col}
+            </label>
+          ))}
+
+          <input
+            type='button'
+            value='Go!'
+            className="border bg-sky-100 active:bg-red-100"
+            onClick={handleClick}
+          />
+        </div>
+
+        현재 난이도:{difficulty[stage].name}
+
+        <Board row={difficulty[stage].row} col={difficulty[stage].col} />
       </div>
-
-      <div>
-        <span>
-          크기 선택
-        </span>
-
-        {difficulty.map(game => (
-          <label key={game.id}>
-            <input
-              type="radio"
-              value={game.id}
-              checked={selectStage === game.id}
-              onChange={handleRadio}
-            />
-            {game.row}x{game.col}
-          </label>
-        ))}
-
-        <input
-          type='button'
-          value='Go!'
-          className="border bg-sky-100 active:bg-red-100"
-          onClick={handleClick}
-        />
-      </div>
-      
-      현재 난이도:{difficulty[stage].name}
-
-      <Board row={difficulty[stage].row} col={difficulty[stage].col} />
     </div>
+
   );
 }

@@ -28,7 +28,7 @@ const Board = ({ row, col }) => {
   const allMine = Math.floor(row * col * 0.15);
   useEffect(() => {
     initialize(setView, setField, setFailed, setLeftRoom, allMine, row, col);
-  }, [row]);
+  }, [row, col]);
 
   const leftClickHandler = (i, j) => {
     if (view[i][j] < 0) return;
@@ -83,7 +83,7 @@ const Board = ({ row, col }) => {
               <button
                 key={j}
                 disabled={failed}
-                className={`flex items-center justify-center h-10 w-10 border text-3xl font-bold border-black ${room === 1 ? (field[i][j] === -1 ? (failed > 0 ? 'bg-red-300' : 'bg-blue-300') : 'bg-white ' + COLOR_SET[field[i][j]]) : 'bg-slate-300 ' + (failed ? null : 'hover:bg-slate-400')}`}
+                className={`flex items-center justify-center h-9 w-9 border text-3xl font-bold border-black ${room === 1 ? (field[i][j] === -1 ? (failed > 0 ? 'bg-red-300' : 'bg-blue-300') : 'bg-white ' + COLOR_SET[field[i][j]]) : 'bg-slate-300 ' + (failed ? null : 'hover:bg-slate-400')}`}
                 onClick={() => leftClickHandler(i, j)}
                 onContextMenu={(e) => rightClickHandler(e, i, j)}
               >
@@ -107,7 +107,7 @@ const Board = ({ row, col }) => {
         {failed ? (failed > 0 ? '지뢰가 폭발했습니다!' : '모든 지뢰를 찾아냈습니다!') : '지뢰가 없는 모든 칸을 찾아내세요!'}
       </div>
 
-      <button className="bg-green-200" onClick={() => initialize(setView, setField, setFailed, setLeftRoom, allMine, row, col)}>
+      <button className="bg-gradient-to-r from-green-300 to-blue-300 text-gray-600 font-bold text-sm rounded-xl px-4 py-2 transition ease-in-out hover:shadow-md" onClick={() => initialize(setView, setField, setFailed, setLeftRoom, allMine, row, col)}>
         다시하기
       </button>
     </div>
